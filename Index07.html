@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kiểm tra Mã bưu điện</title>
+    <title>Kiểm tra Địa chỉ IP</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             max-width: 500px;
             margin: 50px auto;
             padding: 20px;
-            background-color: #e6f7ff;
+            background-color: #f0f0f5;
         }
         .container {
             background: white;
@@ -19,9 +19,8 @@
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
         h1 {
-            color: red;
+            color: #333;
             text-align: center;
-            font-weight: bold;
         }
         input {
             width: 100%;
@@ -35,7 +34,7 @@
         button {
             width: 100%;
             padding: 12px;
-            background-color: #20c997;
+            background-color: #fd7e14;
             color: white;
             border: none;
             border-radius: 5px;
@@ -43,7 +42,7 @@
             cursor: pointer;
         }
         button:hover {
-            background-color: #1ba085;
+            background-color: #e8630c;
         }
         .message {
             margin-top: 15px;
@@ -62,75 +61,69 @@
             border: 1px solid #f5c6cb;
         }
         .info {
-            background-color: #cff4fc;
-            color: #055160;
-            border: 1px solid #b6effb;
+            background-color: #ffeaa7;
+            color: #6c757d;
+            border: 1px solid #ffd93d;
             margin-bottom: 15px;
         }
-
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Kiểm tra Mã bưu điện</h1>
+        <h1>Kiểm tra Địa chỉ IP</h1>
         <div class="info">
-            Mã bưu điện Việt Nam phải có 5 chữ số (VD: 70000)
+            Nhập địa chỉ IP theo định dạng IPv4 (VD: 192.168.1.1)
         </div>
         
-        <form id="postalForm">
-            <label for="postalCode">Nhập mã bưu điện:</label>
-            <input type="text" id="postalCode" placeholder="Ví dụ: 10000" maxlength="5">
-            <button type="submit">Kiểm tra</button>
-        </form>
+        <div>
+            <label for="ipAddress">Nhập địa chỉ IP:</label>
+            <input type="text" id="ipAddress" placeholder="192.168.1.1">
+            <button onclick="kiemTraIP()">Kiểm tra</button>
+        </div>
         <div id="message"></div>
     </div>
 
     <script>
-        const form = document.getElementById('postalForm');
-        const input = document.getElementById('postalCode');
-        const message = document.getElementById('message');
-
-        function kiemTra() {
-            let code = input.value.trim();
-
-            if (code === '') {
-                thongBao('Mã bưu điện không được để trống', 'error');
+        function kiemTraIP() {
+            const ipInput = document.getElementById('ipAddress');
+            const messageDiv = document.getElementById('message');
+            const ip = ipInput.value.trim();
+            
+            const parts = ip.split('.');
+            
+            if (parts.length !== 4) {
+                hienThiKetQua('Địa chỉ IP không hợp lệ Cần đúng 4 số', 'error');
+                return;
             }
-            else if (code.length !== 5) {
-                thongBao('Mã bưu điện phải có đúng 5 chữ số', 'error');
+            
+            for (let part of parts) {
+                if (!/^\d+$/.test(part)) {
+                    hienThiKetQua('Địa chỉ IP chỉ được chứa số', 'error');
+                    return;
+                }
+                
+                const num = Number(part);
+                if (num < 0 || num > 255) {
+                    hienThiKetQua('Mỗi số phải từ 0 đến 255', 'error');
+                    return;
+                }
             }
-            else if (!chiLaSo(code)) {
-                thongBao('Mã bưu điện chỉ được chứa số', 'error');
-            }
-            else {
-                thongBao('Mã bưu điện hợp lệ', 'success');
-            }
+            
+            hienThiKetQua('Địa chỉ IP hợp lệ', 'success');
         }
 
-        function chiLaSo(str) {
-            for (let char of str) {
-                if (char < '0' || char > '9') return false;
-            }
-            return true;
+        function hienThiKetQua(text, type) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.textContent = text;
+            messageDiv.className = 'message ' + type;
         }
 
-        function thongBao(text, type) {
-            message.textContent = text;
-            message.className = 'message ' + type;
-        }
-
-        form.onsubmit = function(e) {
-            e.preventDefault();
-            kiemTra();
-        }
-
-        input.oninput = function() {
-            this.value = this.value.replace(/[^0-9]/g, '');
-        }
-
-        input.onfocus = function() {
-            if (!this.value) {
-                thongBao('Ví dụ: 10000 (Hà Nội), 70000 (HCM)', 'error');
+        document.getElementById('ipAddress').oninput = function() {
+            this.value = this.value.replace(/[^0-9.]/g, '');
+            
+            const dots = this.value.split('.');
+            if (dots.length > 4) {
+                this.value = dots.slice(0, 4).join('.');
             }
         }
     </script>

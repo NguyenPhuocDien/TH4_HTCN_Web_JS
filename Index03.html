@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kiểm tra Mật khẩu</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: red;
+            text-align: center;
+            font-weight: bold;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .message {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Kiểm tra Mật khẩu</h1>
+        <form id="passwordForm">
+            <label for="password">Nhập mật khẩu:</label>
+            <input type="password" id="password" placeholder="Nhập mật khẩu">
+            <button type="button" onclick="kiemTraMatKhau()">Kiểm tra</button>
+        </form>
+        <div id="message"></div>
+    </div>
+
+    <script>
+        const inputMatKhau = document.getElementById('password');
+        const thongBao = document.getElementById('message');
+
+        function kiemTraMatKhau() {
+            const matKhau = inputMatKhau.value;
+            
+            let hopLe = true;
+            let thongBaoLoi = "";
+
+            if (matKhau.length < 8) {
+                hopLe = false;
+                thongBaoLoi = "Mật khẩu phải có ít nhất 8 ký tự";
+            }
+            else if (!/[A-Z]/.test(matKhau)) {
+                hopLe = false;
+                thongBaoLoi = "Mật khẩu phải có ít nhất 1 chữ hoa";
+            }
+            else if (!/[0-9]/.test(matKhau)) {
+                hopLe = false;
+                thongBaoLoi = "Mật khẩu phải có ít nhất 1 số";
+            }
+            else if (!/[!@#$%^&*]/.test(matKhau)) {
+                hopLe = false;
+                thongBaoLoi = "Mật khẩu phải có ít nhất 1 ký tự đặc biệt (!@#$%^&*)";
+            }
+
+            if (hopLe) {
+                thongBao.textContent = "Mật khẩu an toàn!";
+                thongBao.className = "message success";
+            } else {
+                thongBao.textContent = "❌ " + thongBaoLoi;
+                thongBao.className = "message error";
+            }
+        }
+
+        inputMatKhau.addEventListener('input', kiemTraMatKhau);
+
+        inputMatKhau.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                kiemTraMatKhau();
+            }
+        });
+
+        document.getElementById('passwordForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            kiemTraMatKhau();
+        });
+    </script>
+</body>
+</html>
